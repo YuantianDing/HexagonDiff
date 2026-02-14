@@ -73,3 +73,5 @@ The value of $p_{i,j},  q_{i,j}, a_{i,j}, u_{i,j}, v_{i,j}, b_{i,j}$ are divided
 | $A \le 0, B \le 0$ | $\begin{bmatrix} \mathbf{l_x}_{j} & 0 \\ 0 & \mathbf{l_y}_j \end{bmatrix}$ | $\begin{bmatrix} \mathbf{lb_x}_j \\ \mathbf{lb_y}_j \end{bmatrix}$ |
 | $A \ge 0, B + A \le 0$ | $\begin{bmatrix}\mathbf{u_{\Delta x}}_{j} & \mathbf{u_{\Delta x}}_{j} + \mathbf{l_y}_{j} \\0 & \mathbf{l_y}_j\end{bmatrix}$ | $\begin{bmatrix} \mathbf{ub_{\Delta x}}_j + \mathbf{lb_y}_j \\ \mathbf{lb_y}_j \end{bmatrix}$ |
 | $A \ge 0, B + A \ge 0$ | $\begin{bmatrix} \mathbf{u_x}_{j} & 0 \\ \mathbf{u_x}_{j} - \mathbf{u_{\Delta x}}_{j} & -\mathbf{u_{\Delta y}}_j \end{bmatrix}$ | $\begin{bmatrix} \mathbf{ub_x}_j \\ \mathbf{ub_x}_j - \mathbf{ub}_{\Delta} \end{bmatrix}$ |
+
+Note that the result above may not be the optimal bound using linear programming, so further research can be done to find the optimal bound.
