@@ -1,6 +1,14 @@
 
 # Linearization of `exp`
 
+Given a `gbound` for the input of `exp`, we can derive the `dbound` for `exp(x)`, `exp(y)` and `exp(x) - exp(y)`. 
+
+Here we only consider one value of the input vector, the bounds are given as follows:
+
+```rs
+fn gbound = lx ≤ x ≤ ux, ly ≤ y ≤ uy, ld ≤ x - y ≤ ud
+```
+
 ## Bounds for `exp(x)`, `exp(y)`
 
 Let the input `gbound` be `lx <= x <= ux`, `ly <= y <= uy`, and `ld <= x - y <= ud`. We can derive the following constraints:
@@ -107,7 +115,7 @@ fn exp_dbound_L2(lamx2, lamd2, lx, ux, ld, ud)
     min(
         exp_dbound_d2_min0(lamx2 (1 - exp(-ld)), lamx2, lx, min(ux, xbound)) - lamd2 ld,
         exp_dbound_d2_min0(lamx2 (1 - exp(-ud)), lamx2, max(lx, xbound), ux) - lamd2 ud,
-    )
+    ) // Note: if any of the bounds doesn't exists, we can simply ignore that case.
 
 fn exp_dbound_U2(lamx2, lamd2, lx, ux, ld, ud)
     = max! lx ≤ x ≤ ux, ld ≤ d ≤ ud { exp(x) - exp(x - d) - lamx2 x - lamd2 d }
@@ -132,7 +140,7 @@ fn exp_dbound_U2(lamx2, lamd2, lx, ux, ld, ud)
         exp_dbound_d2_max0(1 - exp(-ud), lamx2, max(lx, ud + log(lamd2)), ux) - lamd2 * ud,
         exp_dbound_d2_max0(1, lamx2 + lamd2, max(lx, ld + log(lamd2)), min(ux, ud + log(lamd2))) - lamd2 (1 - log(lamd2)),
         exp_dbound_d2_max0(1 - exp(-ld), lamx2, lx, min(ux, ld + log(lamd2))) - lamd2 * ld,
-    )
+    ) // Note: if any of the bounds doesn't exists, we can simply ignore that case.
 ```
 
 ### Case 3: `ux - lx` is the biggest
