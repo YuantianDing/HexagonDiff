@@ -1,0 +1,8 @@
+[book]
+title = "HexagonDiff Wiki"
+authors = ["Yuantian Ding"]
+language = "en"
+src = "plans"
+
+[preprocessor.katex]
+after = ["links"]
