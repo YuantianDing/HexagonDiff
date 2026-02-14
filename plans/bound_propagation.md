@@ -6,8 +6,10 @@ Bound propagation is a process to compute the global bound for the input of a no
 *Propagation Boundary* $B$ is a set of edges in the differential network, where each edge represents a result $(\mathbf{x}_i, \mathbf{y}_i) \in B$ from previous computation in the network. In the bound propagation process, each bound is represented as a linear combination of the results in the propagation boundary, which is in the following format:
 
 $$
+\begin{gathered}
 \cdot \le \mathbf{c} + \sum_{(\mathbf{x}_i, \mathbf{y}_i) \in B} A_i \mathbf{x}_i + B_i \mathbf{y}_i \\
-\text{where }\cdot \text{ is one of } \pm \mathbf{x}, \pm \mathbf{y}, \pm (\mathbf{x} - \mathbf{y})
+\text{ where }\cdot \text{ is one of } \pm \mathbf{x}, \pm \mathbf{y}, \pm (\mathbf{x} - \mathbf{y})
+\end{gathered}
 $$
 
 The propagation process start with initial bounds of non-linear operator input, e.g., $\mathbf{x} - \mathbf{y} \le \mathbf{x} - \mathbf{y}$. At this point, the propagation boundary is $\{(\mathbf{x}, \mathbf{y})\}$ as a starting point. Then we propagate the bounds backward 
@@ -26,7 +28,8 @@ Since the input specification is in the form of $\mathbf{lb} \le \mathbf{x} \le 
 Given a bound in the form of $\cdot \le \mathbf{c} + \displaystyle\sum_{(\mathbf{x}_i, \mathbf{y}_i) \in B} A_i \mathbf{x}_i + B_i \mathbf{y}_i$, where all $(\mathbf{x}_i, \mathbf{y}_i) \in B$ are input layers. We obtain the global bound in the form of:
 
 $$
-\cdot \le \mathbf{c} + \displaystyle\sum_{(\mathbf{x}_i, \mathbf{y}_i) \in B} A_i \odot \mathbf{X}_i + B_i \odot \mathbf{Y}_i \text{ where}\\
+\begin{gathered}
+\cdot \le \mathbf{c} + \displaystyle\sum_{(\mathbf{x}_i, \mathbf{y}_i) \in B} A_i \odot \mathbf{X}_i + B_i \odot \mathbf{Y}_i \text{ where }\\
 (\mathbf{X}_i)_{m,n} = \begin{cases}
 (\mathbf{ub}_i)_n & \text{if } (A_{i})_{m,n} > 0\\
 (\mathbf{lb}_i)_n & \text{if } (A_{i})_{m,n} < 0\\
@@ -35,6 +38,7 @@ $$
 (\mathbf{ub}_i)_n & \text{if } (B_{i})_{m,n} > 0\\
 (\mathbf{lb}_i)_n & \text{if } (B_{i})_{m,n} < 0\\
 \end{cases}
+\end{gathered}
 $$
 
 
@@ -43,10 +47,12 @@ $$
 If the next operator of the topological order is a non-linear layer, we can propagate the bound through the non-linear layer by substituting the output of the non-linear layer with its linear dependent bounds. For a 1-input 1-output non-linear operator, the linear dependent bounds are in the following form:
 
 $$
+\begin{gathered}
 \mathbf{l_x} \odot \mathbf{x} + \mathbf{lb}_
 x \le f(\mathbf{x}) \le \mathbf{u_x} \odot \mathbf{x} + \mathbf{ub}_x\\
 \mathbf{l_y} \odot \mathbf{y} + \mathbf{lb}_y \le f(\mathbf{y}) \le \mathbf{u_y} \odot \mathbf{y} + \mathbf{ub}_y\\
 \mathbf{l_{\Delta x}} \odot \mathbf{x} + \mathbf{l_{\Delta y}} \odot \mathbf{y} + \mathbf{lb}_{\Delta} \le f(\mathbf{x}) - f(\mathbf{y}) \le \mathbf{u_{\Delta x}} \odot \mathbf{x} + \mathbf{u_{\Delta y}} \odot \mathbf{y} + \mathbf{ub}_{\Delta}\\
+\end{gathered}
 $$
 
 Given a bound in the form of $\cdot \le \mathbf{c} + A f(\mathbf{x}) + B f(\mathbf{y})$, we can propagate using the follow substitution:
