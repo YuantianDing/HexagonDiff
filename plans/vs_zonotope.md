@@ -12,3 +12,5 @@ $$
 $$
 
 However, for differential verification, a same formula can be written in different forms of zonotope mentioned above, with zonotope alone, it is not trivial to decide which form is better. The method proposed in [Bound Propagation](bound_propagation.md) can be used to select the best form of zonotope, which is more general than the zonotope formalization. 
+
+If we just run the network for once, why not ignore the performance and care more about the tightness of the bound? 
