@@ -25,11 +25,7 @@ To compute the global bound for the input of the non-linear operator, we propaga
 For more details about the linearization and bound propagation process, please refer to the following sections:
 
 - [Bound Propagation](bound_propagation.md)
-- [Linearization of ReLU](linearization/relu.md)
-- [Linearization of $1/x$](linearization/inv.md)
-- [Linearization of $e^x$](linearization/exp.md)
-
-Note: [Why this is more general than Zonotope formalization](vs_zonotope.md)
+- [Linearization Methods](linearization.md)
 
 ## Equivalence Checking
 
