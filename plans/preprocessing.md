@@ -1,6 +1,6 @@
 
 
-# Preprocessing (A guide to AI Code Generation)
+# Preprocessing (A prompt to AI Code Generation)
 
 HexagonDiff is a C++ tool for differential verification of deep neural networks (DNNs) on Hexagon DSPs. It compares the outputs of two DNN implementations to identify discrepancies and ensure correctness.
 
