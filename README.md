@@ -1,7 +1,7 @@
 
 # HexagonDiff
 
-HexagonDiff is a C++ tool for differential verification of deep neural networks (DNNs) on Hexagon DSPs. It compares the outputs of two DNN implementations to identify discrepancies and ensure correctness.
+HexagonDiff is a Python tool for differential verification of deep neural networks (DNNs) on Hexagon DSPs. It compares the outputs of two DNN implementations to identify discrepancies and ensure correctness.
 
 ## Command-line Usage
 
@@ -29,5 +29,6 @@ Note that one single VNNLIB specification file is used for both DNNs, and the sp
 HexagonDiff relies on the following libraries:
 
 - `onnx`: For parsing ONNX models.
-- `eigen`: For linear algebra operations.
+- `numpy`: For linear algebra operations.
+- `triton`: For GPU acceleration of verification code.
 

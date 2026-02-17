@@ -55,8 +55,4 @@ Then we consider the bounds for $f(x)$, $f(y)$ and $f(x) - f(y)$. For each funct
 
 ## Linearization of Specific Non-linear Operators
 
-Here we list the detailed linearization for some common non-linear operators, and we will add more non-linear operators in the future.
-
-- [ReLU](relu.md)
-- [Reciprocal](inv.md)
-- [Exponential](exp.md)
+In the following sections, we will discuss the linearization of specific non-linear operators, including basic operators such as ReLU, reciprocal and exponential, transformer operators such as softmax, layernorm, multi-head attention and feed-forward network, and token pruning methods such as top-k, EViT and ToMe. For each operator, we will compute the convex (concave) envelope of the operator in the selected parallelogram area to obtain the linear constraints.
