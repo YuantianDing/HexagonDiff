@@ -3,7 +3,7 @@
 
 Bound propagation is a process to compute the global bound for the input of a non-linear operator in the differential network. The global bound is used to estimate the input of the non-linear operator, which is then used to compute the linear dependent bounds for the non-linear operator.
 
-*Propagation Boundary* $B$ is a set of edges in the differential network, where each edge represents a result $(\mathbf{x}_i, \mathbf{y}_i) \in B$ from previous computation in the network. In the bound propagation process, each bound is represented as a linear combination of the results in the propagation boundary, which is in the following format:
+*Propagation Boundary* $B$ is a set of edges in the [differential network](preprocessing.md#differential-network), where each edge represents a result $(\mathbf{x}_i, \mathbf{y}_i) \in B$ from previous computation in the network. In the bound propagation process, each bound is represented as a linear combination of the results in the propagation boundary, which is in the following format:
 
 $$
 \begin{gathered}
@@ -65,7 +65,9 @@ $$
 
 The value of $p_{i,j},  q_{i,j}, a_{i,j}, u_{i,j}, v_{i,j}, b_{i,j}$ are divided into 6 cases based on $A_{i, j}$ and $B_{i, j}$, where each case is corresponding to a point in the hexagon:
 
-![](hexagon.png)
+<p align="center">
+    <img src="hexagon.svg" alt="Hexagon"/>
+</p>
 
 | Point | Cases | $\begin{bmatrix} p_{i,j} & q_{i,j} \\ u_{i,j} & v_{i,j} \end{bmatrix}$ | $\begin{bmatrix} a_{i,j} \\ b_{i,j} \end{bmatrix}$ |
 | :--: | :---: | :---: | :---: |
