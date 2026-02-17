@@ -2,6 +2,8 @@
 
 # Linearization of ReLU
 
+For ReLU, we simply use the convex (concave) envelope of ReLU to compute the minimum $L_1$ bounds mentioned in [Linearization Methods](./README.md#linearization-objective). The envelope of ReLU is in the following form:
+
 ## Envelope of ReLU(x)
 
 ```py
