@@ -1,7 +1,7 @@
 
-# Why this is more general than Zonotope formalization
+# About Zonotopes
 
-Zonotope is a special case of the linear dependent bound (dbound) formalization, where the upper and lower bounds have the same slope:
+A special case of the linear dependent bound (dbound) formalization, where the upper and lower bounds have the same slope:
 
 $$
 \begin{gathered}
@@ -11,4 +11,4 @@ $$
 \end{gathered}
 $$
 
-However, this is not exactly a zonotope, the area for each $(x,y)$ is a hexagon instead of a parallelogram, so to make it a zonotope, we need to further relax the hexagon area to a parallelogram area, which means we need to select one of the two slopes as the slope for both upper and lower bounds. However, there are different ways to loose this bound, it is not trivial to decide which form is better. The method proposed in [Bound Propagation](bound_propagation.md) can be used to select the best form of zonotope, which is more general than the zonotope formalization. 
+However, this is still not a zonotope, the area for each $(x,y)$ is a hexagon instead of a parallelogram, so to make it a zonotope, we need to further relax the hexagon area to a parallelogram area, which means we need to select one of the two slopes as the slope for both upper and lower bounds. However, there are different ways to loose this bound, it is not trivial to decide which form is better. The method proposed in [Bound Propagation](bound_propagation.md) can be used to select the best bound, which will give a tighter bound than the standard zonotope formalization. 
