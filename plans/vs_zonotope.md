@@ -11,4 +11,4 @@ $$
 \end{gathered}
 $$
 
-However, for differential verification, a same formula can be written in different forms of zonotope mentioned above, with zonotope alone, it is not trivial to decide which form is better. The method proposed in [Bound Propagation](bound_propagation.md) can be used to select the best form of zonotope, which is more general than the zonotope formalization. 
+However, this is not exactly a zonotope, the area for each $(x,y)$ is a hexagon instead of a parallelogram, so to make it a zonotope, we need to further relax the hexagon area to a parallelogram area, which means we need to select one of the two slopes as the slope for both upper and lower bounds. However, there are different ways to loose this bound, it is not trivial to decide which form is better. The method proposed in [Bound Propagation](bound_propagation.md) can be used to select the best form of zonotope, which is more general than the zonotope formalization. 
