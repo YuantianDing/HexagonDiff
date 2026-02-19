@@ -23,7 +23,7 @@ Scoring Method: Attention between spatial tokens and the [CLS] token.
 
 ## Formalization for Linearization
 
-The only operation that prevents linearization is the sorting operation in Top-K. The sorting operation can be formalized as follows:
+The only operation that prevents linearization is the sorting operation in Top-K. The sorting operation can be formalized as follows, where $\mathbf{m}$ is the metric used for sorting, and $X$ is the input tokens:
 
 $$
 \begin{aligned}
