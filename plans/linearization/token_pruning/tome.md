@@ -1,8 +1,8 @@
 # ToMe
 
-Paper: [Faster Transformers with Token Merging](https://arxiv.org/abs/2211.13227)
+Paper: [TOKEN MERGING: YOUR VIT BUT FASTER](https://arxiv.org/pdf/2210.09461)
 
-Code: [ToMe](
+Code: [ToMe](https://github.com/facebookresearch/ToMe)
 
 
 
@@ -74,6 +74,7 @@ def merge(x: torch.Tensor, mode="mean") -> torch.Tensor:
 x = merge(x * size, mode="sum")
 size = merge(size, mode="sum")
 ```
+
 
 
 

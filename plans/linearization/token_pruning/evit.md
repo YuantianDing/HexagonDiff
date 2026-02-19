@@ -27,3 +27,16 @@ x = torch.cat([x[:, 0:1], x_others, extra_token], dim=1)
 
 In addition to TopK method, EViT adds an extra token, which is the weighted average of the non-topk tokens, where the weight is the attention between the non-topk tokens and the [CLS] token. 
 
+
+## Formalization for Linearization
+
+Sorting operation is the same as Top-K. So we only consider the weighted average operation for the extra token. The weighted average operation can be formalized as follows:
+
+$$
+\begin{aligned}
+\text{ExtraToken}(X, \text{Attn}_0, k) = \sum_{i=1}^N h\left(\sum_{j=1}^N h(\text{Attn}_{0,j} - \text{Attn}_{0,i}) - k\right) X_{i} \text{Attn}_{0,i}
+\end{aligned}
+$$
+
+The formula above are interpreted as follows: For each token $i$, we count how many tokens have a score higher than it, which is $\displaystyle\sum_{j=1}^N h(\text{Attn}_{0,j} - \text{Attn}_{0,i})$. If the count is greater than $k$, then this token is not in the top-k tokens, and we add its feature weighted by its attention score to the output.
+
