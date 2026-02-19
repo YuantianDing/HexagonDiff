@@ -21,3 +21,29 @@ x = torch.cat([x[:, 0:1], x_others], dim=1)
 Scoring Method: Attention between spatial tokens and the [CLS] token.
 
 
+## Formalization
+
+The sorting operation can be formalized as follows:
+
+$$
+\begin{aligned}
+\text{Kth-Best}(\mathbf{x}, \mathbf{m}, k) &= \text{sort-by}_\text{dec}(\mathbf{x}, \mathbf{m})[k - 1]\\
+&= \sum_{i=1}^N \delta\left(\sum_{j=1}^N h(\mathbf{m}_j - \mathbf{m}_i) - k\right) \mathbf{x}_{i} \\
+\end{aligned}
+$$
+
+where 
+$$
+\begin{gathered}
+\delta(x) = \mathbf{1}[x = 0] \\
+h(x) = \mathbf{1}[x \ge 0] \\
+\end{gathered}
+$$
+
+So the above procedure can be formalized as follows:
+
+$$
+\begin{aligned}
+\mathbf{x}'_k &= \text{Kth-Best}(\mathbf{x}, \text{Attn}_0, k) \\
+\end{aligned}
+$$
