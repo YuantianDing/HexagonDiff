@@ -4,9 +4,6 @@ Paper: [TOKEN MERGING: YOUR VIT BUT FASTER](https://arxiv.org/pdf/2210.09461)
 
 Code: [ToMe](https://github.com/facebookresearch/ToMe)
 
-
-
-
 ## Overview
 
 ToMe's attension:
@@ -74,6 +71,8 @@ def merge(x: torch.Tensor, mode="mean") -> torch.Tensor:
 x = merge(x * size, mode="sum")
 size = merge(size, mode="sum")
 ```
+
+![](tome.png)
 
 
 
