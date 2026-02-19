@@ -4,5 +4,8 @@ authors = ["Yuantian Ding"]
 language = "en"
 src = "plans"
 
+[output.html]
+default-theme = "light"
+
 [preprocessor.katex]
 after = ["links"]

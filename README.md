@@ -29,6 +29,6 @@ Note that one single VNNLIB specification file is used for both DNNs, and the sp
 HexagonDiff relies on the following libraries:
 
 - `onnx`: For parsing ONNX models.
-- `numpy`: For linear algebra operations.
+- `torch`: For linear algebra operations and auto differentiation.
 - `triton`: For GPU acceleration of verification code.
 

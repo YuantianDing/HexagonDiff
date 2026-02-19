@@ -1,57 +1,103 @@
 
-
 # Linearization of ReLU
 
-For ReLU, we simply use the convex (concave) envelope of ReLU to compute the minimum $L_1$ bounds mentioned in [Linearization Methods](../linearization.md#linearization-objective). The envelope of ReLU is in the following form:
+Here we simply provide the $\boxed{f}$ and $\boxed{f_\Delta}$ for ReLU, the bounds for ReLU can be easily derived using the formulas in [Linearization of Basics Operators](../linearization/basics/README.md#bound-for-fx).
 
-## Envelope of ReLU(x)
+## Boxed $f(x)$
 
 ```py
-def relu_cup(x, lb, ub):
-    return relu(x)
-
-def relu_cap(x, lb, ub):
-    return ((ub - x) * relu(lb) + (x - lb) * relu(ub)) / (ub - lb)
+def relu_box(a, b, l, u)
+    = max(l ≤ x ≤ u){ a x + b relu(x) }
+    = with 
+        lam = (relu(u) - relu(l)) / (u - l)
+        if a + b ≥ 0 and a + lam b ≥ 0:
+            a * u + b * relu(u)
+        and if a + lam b ≤ 0 and a ≤ 0:
+            a * l + b * relu(l)
+        and if a ≥ 0 and a + b ≤ 0:
+            p = clip(0, l, u)
+            a * p + b * relu(p)
 ```
 
-## Envelope of ReLU(x) - ReLU(y)
 
-We only consider the area of `lx ≤ x ≤ ux, ld ≤ x - y ≤ ud`, we have the following formulas for the envelope of $\text{relu}(x) - \text{relu}(y)$:
+## Boxed $f(x) - f(x - d)$
 
 ```py
-def relu_diff(x, d):
-    return relu(x) - relu(x - d)
+def relu_diff_box0(a, b, d, l, u)
+    = max(l ≤ x ≤ u){ a x + b (relu(x) - relu(x - d)) }
+    = if d ≥ 0:
+        max(l ≤ x ≤ u){ a x + b (relu(x) - relu(x - d)) }
+    and if d ≤ 0:
+        max(l ≤ x ≤ u){ a x + b (relu(-x) - relu(-x + d) + d) }
+    = if d ≥ 0:
+        pointd = clip(d, l, u)
+        point0 = clip(0, l, u)
+        lamd = (relu(pointd) - relu(l)) / (pointd - l)
+        lam0 = (relu(u) - relu(point0)) / (u - point0)
+        if a + lam0 b ≥ 0 and a ≥ 0:
+            a * u + b * (relu(u) - relu(u - pointd))
+        and if a ≤ 0 and a + lambd b ≥ 0:
+            a * pointd + b * relu(pointd)
+        and if a + lamd b ≤ 0 and a ≤ 0:
+            a * l + b * (relu(l) - relu(l - pointd))
+        and if a ≥ 0 and a + lamd b ≤ 0:
+            a * point0 - b * relu(-pointd)
+    and if d ≤ 0:
+        relu_diff_box0(a, b, -d, -u, -l) + b d
 
-def two_points(x, d, lx, ux):
-    if d >= 0:
-        return lx, clip(d, lx, ux)
-    else:
-        return clip(0, lx, ux), ux
+def relu_diff_inv0(d, a)
+    = if d ≥ 0 and 0 ≤ a ≤ d: a
+    and if d ≤ 0 and d ≤ a ≤ 0: a - d
+    else: None
 
-def relu_diff_cup(x, d, lx, ux, ld, ud):
-    xu1, xu2 = two_points(x, ud, lx, ux)
-    xl1, xl2 = two_points(x, ld, lx, ux)
-    k = (d - ld) / (ud - ld)
-    x1 = k * xu1 + (1 - k) * xl1
-    x2 = k * xu2 + (1 - k) * xl2
-    if x1 ≤ x ≤ x2:
-        return -(k * relu(-ud) + (1 - k) * relu(-ld))
-    elif x2 < x:
-        p = (ux - x) / (ux - x2)
-        uu = p * relu(-ud) + (1-p) * (relu(ux) - relu(ux - ud))
-        ll = p * relu(-ld) + (1-p) * (relu(ux) - relu(ux - ld))
-        return k * uu + (1 - k) * ll
-    else:
-        p = (x - lx) / (x1 - lx)
-        uu = p * relu(-ud) + (1-p) * (relu(lx) - relu(lx - ud))
-        ll = p * relu(-ld) + (1-p) * (relu(lx) - relu(lx - ld))
-        return k * uu + (1 - k) * ll
-
-def relu_diff_cap(x, d, lx, ux, ld, ud):
-    if x < d:
-        return ((ux - x) * relu(lx) + (x - lx) * relu(ux)) / (ux - lx)
-    else:
-        p = max(d, lx)
-        k = (x - p) / (ux - p)
-        return k * relu_diff(p, d) + (1 - k) * relu_diff(ux, d)
+def relu_diff_box(a, b, c, lx, ux, ld, ud)
+    = max(lx ≤ x ≤ ux, ld ≤ d ≤ ud){ a x + b d + c (relu(x) - relu(x - d)) } 
+    = max(lx ≤ x ≤ ux){ a x +  c relu(x) + b d - c relu(x - d) } 
+    = max(lx ≤ x ≤ ux){ a x +  c relu(x) + relu_box(b, -c, x - ud, x - ld) }  
+    = max(lx ≤ x ≤ ux){ a x +  c relu(x) + with 
+        lam = (relu(x - ld) - relu(x - ud)) / (ud - ld)
+        if a + b ≥ 0 and a + lam b ≥ 0:
+            a * (x - ld) + b * relu(x - ld)
+        and if a + lam b ≤ 0 and a ≤ 0:
+            a * (x - ud) + b * relu(x - ud)
+        and if a ≥ 0 and a + b ≤ 0:
+            p = clip(0, x - ud, x - ld)
+            b * p - c * relu(p)
+    }
+    = max(lx ≤ x ≤ ux){ a x +  c relu(x) + with 
+        xbound = ld + relu_diff_inv0(ud - ld, (ud - ld) b / c )
+        if b - c ≥ 0 and x ≥ xbound:
+            b (x - ld) - c relu(x - ld)
+        and if x ≤ xbound and b ≤ 0:
+            b (x - ud) - c relu(x - ud)
+        and if b ≥ 0 and b - c ≤ 0:
+            p = clip(0, x - ud, x - ld)
+            b * p - c * relu(p)
+    }
+    = with 
+        xbound = ld + relu_diff_inv0(ud - ld, (ud - ld) b / c )
+        if b - c ≥ 0: max(max(lx, xbound) ≤ x ≤ ux){ a x +  c relu(x) + b (x - ld) - c relu(x - ld) },
+        if b ≤ 0: max(lx ≤ x ≤ min(ux, xbound)){ a x +  c relu(x) + b (x - ud) - c relu(x - ud) },
+        if b ≥ 0 and b - c ≤ 0: max(lx ≤ x ≤ ux){
+            p = clip(0, x - ud, x - ld)
+            a x + c relu(x) + b p - c  relu(p)
+        }
+    = with
+        xbound = ld + relu_diff_inv0(ud - ld, (ud - ld) b / c )
+        if b - c ≥ 0: max(max(lx, xbound) ≤ x ≤ ux){ (a + b) x +  c relu(x) - c relu(x - ld) } - b ld,
+        if b ≤ 0: max(lx ≤ x ≤ min(ux, xbound)){ (a + b) x +  c relu(x) - c relu(x - ud) } - b ud,
+        if b ≥ 0 and b - c ≤ 0: max(lx ≤ x ≤ ux){
+            p = clip(0, x - ud, x - ld)
+            a x + c relu(x) + b p - c  relu(p)
+        }
+    = with
+        xbound = ld + relu_diff_inv0(ud - ld, (ud - ld) b / c )
+        if b - c ≥ 0: relu_diff_box0(a+b, c, ld, max(lx, xbound), ux) - b ld,
+        if b ≤ 0: relu_diff_box0(a+b, c, ud, lx, min(ux, xbound)) - b ud,
+        if b ≥ 0 and b - c ≤ 0:
+            max(
+                relu_box(a, c, max(lx, ld), min(ux, ud)),
+                relu_diff_box0(a + b, c, ld, lx, min(ux, ud)) - b ld,
+                relu_diff_box0(a + b, c, ud, max(lx, ld), ux) - b ud,
+            )
 ```
