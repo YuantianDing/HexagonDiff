@@ -19,5 +19,6 @@
   - [Token Pruning](linearization/token_pruning/README.md)
     - [Top-K](linearization/token_pruning/topk.md)
     - [EViT](linearization/token_pruning/evit.md)
+    - [POMT](linearization/token_pruning/pomt.md)
     - [ToMe](linearization/token_pruning/tome.md)
 - [About Zonotope](vs_zonotope.md)
