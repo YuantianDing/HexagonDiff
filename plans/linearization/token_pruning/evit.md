@@ -25,6 +25,10 @@ extra_token = torch.sum(non_topk * non_topk_attn.unsqueeze(-1), dim=1, keepdim=T
 x = torch.cat([x[:, 0:1], x_others, extra_token], dim=1)
 ```
 
+* `torch.topk`: Returns the k largest elements of the given input tensor along a given dimension. The function returns a namedtuple (values, indices) where values is the k largest elements and indices is the indices of the k largest elements in the original input tensor.
+* `torch.gather`: Gathers values along an axis specified by dim. For a 3-D tensor, if dim = 1, then for each value in the output tensor, it is equal to input[i][index[i][j][k]][k] where i, j, k are the indices of the output tensor.
+
+
 In addition to TopK method, EViT adds an extra token, which is the weighted average of the non-topk tokens, where the weight is the attention between the non-topk tokens and the [CLS] token. 
 
 

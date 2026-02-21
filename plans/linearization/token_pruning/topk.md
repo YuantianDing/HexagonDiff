@@ -20,6 +20,8 @@ x = torch.cat([x[:, 0:1], x_others], dim=1)
 
 Scoring Method: Attention between spatial tokens and the [CLS] token.
 
+* `torch.topk`: Returns the k largest elements of the given input tensor along a given dimension. The function returns a namedtuple (values, indices) where values is the k largest elements and indices is the indices of the k largest elements in the original input tensor.
+* `torch.gather`: Gathers values along an axis specified by dim. For a 3-D tensor, if dim = 1, then for each value in the output tensor, it is equal to input[i][index[i][j][k]][k] where i, j, k are the indices of the output tensor.
 
 ## Formalization for Linearization
 
