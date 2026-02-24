@@ -29,7 +29,7 @@ I formalize the code above as the following formula:
 
 $$
 \begin{aligned}
-\text{Top-K}(X, \mathrm{Attn}, k) &= \text{sort-by}_\text{dec}(\mathbf{x}, \mathrm{Attn}_{0,1:})[:\!k]\\
+\text{Top-K}(X, \mathrm{Attn}, k) &= \text{sort-by}_\text{dec}(X, \mathrm{Attn}_{0,1:})[:\!k]\\
 \end{aligned}
 $$
 
@@ -37,7 +37,7 @@ The only operation that prevents linearization is the sorting operation in Top-K
 
 $$
 \begin{aligned}
-\text{Kth-Best}(X, \mathbf{m}, k) &= \text{sort-by}_\text{dec}(\mathbf{x}, \mathbf{m})[k - 1]\\
+\text{Kth-Best}(X, \mathbf{m}, k) &= \text{sort-by}_\text{dec}(X, \mathbf{m})[k - 1]\\
 &= \sum_{i=1}^N \delta\left(\sum_{j=1}^N h(\mathbf{m}_j - \mathbf{m}_i) - k\right) X_{i} \\
 \end{aligned}
 $$
