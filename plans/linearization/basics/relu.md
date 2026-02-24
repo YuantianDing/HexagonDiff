@@ -97,7 +97,7 @@ def relu_diff_box(a, b, c, lx, ux, ld, ud)
         if b ≥ 0 and b - c ≤ 0:
             max(
                 relu_box(a, c, max(lx, ld), min(ux, ud)),
-                relu_diff_box0(a + b, c, ld, lx, min(ux, ud)) - b ld,
-                relu_diff_box0(a + b, c, ud, max(lx, ld), ux) - b ud,
+                relu_diff_box0(a + b, c, ld, lx, min(ux, ld)) - b ld,
+                relu_diff_box0(a + b, c, ud, max(lx, ud), ux) - b ud,
             )
 ```

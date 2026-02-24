@@ -25,6 +25,14 @@ Scoring Method: Attention between spatial tokens and the [CLS] token.
 
 ## Formalization for Linearization
 
+I formalize the code above as the following formula:
+
+$$
+\begin{aligned}
+\text{Top-K}(X, \mathrm{Attn}, k) &= \text{sort-by}_\text{dec}(\mathbf{x}, \mathrm{Attn}_{0,1:})[:\!k]\\
+\end{aligned}
+$$
+
 The only operation that prevents linearization is the sorting operation in Top-K. The sorting operation can be formalized as follows, where $\mathbf{m}$ is the metric used for sorting, and $X$ is the input tokens:
 
 $$
