@@ -34,7 +34,7 @@ def topk_pruning(X: Tensor[N+1, C], attn: Tensor[N+1, N+1], k: int) -> Tensor[k+
     N: the number of non-class tokens
     C: the feature dimension
     k: the number of tokens to keep.
-    
+
     Arguments:
     X: the input token sequence, with shape [N+1, C], where N is the number of non-class tokens and C is the feature dimension.
     attn: the attention map, with shape [N+1, N+1].
@@ -71,3 +71,5 @@ def kth_largest(X: Tensor[N, C], key: Tensor[N], k: int) -> Tensor[C]:
 
     return sum<i>(delta1(num_greater[i] - k) * X[i])
 ```
+
+`kth_largest` function is interpreted as follows: for each token i, we count the number of tokens whose score is greater than the score of token i. If the number of tokens with greater score is equal to k, then token i is the k-th largest token, and we return its feature. Otherwise, we return 0.
