@@ -28,8 +28,18 @@ Scoring Method: Attention between spatial tokens and the [CLS] token.
 The code above can be simplified into the following code (Python-like syntax).
 
 ```py
-# N is the number of non-class tokens, C is the feature dimension, and k is the number of tokens to keep.
 def topk_pruning(X: Tensor[N+1, C], attn: Tensor[N+1, N+1], k: int) -> Tensor[k+1, C]:
+    """
+    Parameters:
+    N: the number of non-class tokens
+    C: the feature dimension
+    k: the number of tokens to keep.
+    
+    Arguments:
+    X: the input token sequence, with shape [N+1, C], where N is the number of non-class tokens and C is the feature dimension.
+    attn: the attention map, with shape [N+1, N+1].
+    k: the number of tokens to keep.
+    """
     X_non_cls = X[1:]  # [N, C]
     scores = attn[0, 1:] # [N]
     X_new = sort_by_key(X_non_cls, scores, descending=True)  # [N, C]
