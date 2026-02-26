@@ -6,9 +6,11 @@ $$
 \begin{gathered}
 \mathbf{l_x} \odot \mathbf{x} + \mathbf{lb}_x \le f(\mathbf{x}) \le \mathbf{u_x} \odot \mathbf{x} + \mathbf{ub}_x\\
 \mathbf{l_y} \odot \mathbf{y} + \mathbf{lb}_y \le f(\mathbf{y}) \le \mathbf{u_y} \odot \mathbf{y} + \mathbf{ub}_y\\
-\mathbf{l_{\Delta x}} \odot \mathbf{x} + \mathbf{l_{\Delta y}} \odot \mathbf{y} + \mathbf{lb}_{\Delta} \le f(\mathbf{x}) - f(\mathbf{y}) \le \mathbf{u_{\Delta x}} \odot \mathbf{x} + \mathbf{u_{\Delta y}} \odot \mathbf{y} + \mathbf{ub}_{\Delta}\\
+\mathbf{l_{\Delta x}} \odot \mathbf{x} + \mathbf{l_{\Delta y}} \odot \mathbf{y} + \mathbf{lb}_{\Delta} \le f(\mathbf{y}) - \boldsymbol{\alpha} \odot f(\mathbf{x}) \le \mathbf{u_{\Delta x}} \odot \mathbf{x} + \mathbf{u_{\Delta y}} \odot \mathbf{y} + \mathbf{ub}_{\Delta}\\
 \end{gathered}
 $$
+
+where vector $\boldsymbol{\alpha} ≥ 0$ is a number obtained from linearization.
 
 However, to obtain an accurate linear dependent bound, we need the bound restriction for the input of the non-linear operator. For simplicity of the linearization process, we remove the dependency and use *global bound* (`gbound`) to estimate the input of the non-linear operator, which is in the following form:
 
@@ -16,7 +18,8 @@ $$
 \begin{gathered}
 \mathbf{lx} \le \mathbf{x} \le \mathbf{ux}\\
 \mathbf{ly} \le \mathbf{y} \le \mathbf{uy}\\
-\mathbf{ld} \le \mathbf{x} - \mathbf{y} \le \mathbf{ud}\\
+\mathbf{ld} \le \mathbf{y} - \boldsymbol{\beta} \odot \mathbf{x} \le \mathbf{ud}\\
+\quad \boldsymbol{\beta} = \frac{\mathbf{uy} - \mathbf{ly}}{\mathbf{ux} - \mathbf{lx}} \ge 0
 \end{gathered}
 $$
 

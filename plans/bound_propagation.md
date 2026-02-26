@@ -1,14 +1,14 @@
 
 # Bound Propagation
 
-Bound propagation is a process to compute the global bound for the input of a non-linear operator in the differential network. The global bound is used to estimate the input of the non-linear operator, which is then used to compute the linear dependent bounds for the non-linear operator.
+Bound propagation is a process to compute the global bound for the input of a non-linear operator in the differential network. The global bound is used to estimate the input of the non-linear operator, which is then used to compute the linear dependent bounds for the non-linear operator. The exact bounds for the input of the non-linear operator for each type is described in [Preprocessing](preprocessing.md#differential-network) section.
 
 *Propagation Boundary* $B$ is a set of edges in the [differential network](preprocessing.md#differential-network), where each edge represents a result $(\mathbf{x}_i, \mathbf{y}_i) \in B$ from previous computation in the network. In the bound propagation process, each bound is represented as a linear combination of the results in the propagation boundary, which is in the following format:
 
 $$
 \begin{gathered}
 \cdot \le \mathbf{c} + \sum_{(\mathbf{x}_i, \mathbf{y}_i) \in B} A_i \mathbf{x}_i + B_i \mathbf{y}_i \\
-\text{ where }\cdot \text{ is one of } \pm \mathbf{x}, \pm \mathbf{y}, \pm (\mathbf{x} - \mathbf{y})
+\text{ where }\cdot \text{ is something like } \pm \mathbf{x}, \pm \mathbf{y} \text{ or } \pm (\mathbf{y} - \alpha\mathbf{x})
 \end{gathered}
 $$
 
@@ -51,7 +51,7 @@ $$
 \mathbf{l_x} \odot \mathbf{x} + \mathbf{lb}_
 x \le f(\mathbf{x}) \le \mathbf{u_x} \odot \mathbf{x} + \mathbf{ub}_x\\
 \mathbf{l_y} \odot \mathbf{y} + \mathbf{lb}_y \le f(\mathbf{y}) \le \mathbf{u_y} \odot \mathbf{y} + \mathbf{ub}_y\\
-\mathbf{l_{\Delta x}} \odot \mathbf{x} + \mathbf{l_{\Delta y}} \odot \mathbf{y} + \mathbf{lb}_{\Delta} \le f(\mathbf{x}) - f(\mathbf{y}) \le \mathbf{u_{\Delta x}} \odot \mathbf{x} + \mathbf{u_{\Delta y}} \odot \mathbf{y} + \mathbf{ub}_{\Delta}\\
+\mathbf{l_{\Delta x}} \odot \mathbf{x} + \mathbf{l_{\Delta y}} \odot \mathbf{y} + \mathbf{lb}_{\Delta} \le f(\mathbf{y}) - \boldsymbol{\alpha} \odot f(\mathbf{x}) \le \mathbf{u_{\Delta x}} \odot \mathbf{x} + \mathbf{u_{\Delta y}} \odot \mathbf{y} + \mathbf{ub}_{\Delta}\\
 \end{gathered}
 $$
 
@@ -71,11 +71,11 @@ The value of $p_{i,j},  q_{i,j}, a_{i,j}, u_{i,j}, v_{i,j}, b_{i,j}$ are divided
 
 | Point | Cases | $\begin{bmatrix} p_{i,j} & q_{i,j} \\ u_{i,j} & v_{i,j} \end{bmatrix}$ | $\begin{bmatrix} a_{i,j} \\ b_{i,j} \end{bmatrix}$ |
 | :--: | :---: | :---: | :---: |
-| P1 | $A_{i, j} \ge 0, B_{i, j} \ge 0$ | $\begin{bmatrix} \mathbf{u_x}_{j} & 0 \\ 0 & \mathbf{u_y}_j \end{bmatrix}$ | $\begin{bmatrix} \mathbf{ub_x}_j \\ \mathbf{ub_y}_j \end{bmatrix}$ |
-| P2 | $A_{i,j} \le 0, B_{i,j} + A_{i,j} \ge 0$ | $\begin{bmatrix}\mathbf{l_{\Delta x}}_{j} & \mathbf{l_{\Delta x}}_{j} + \mathbf{u_y}_{j} \\0 & \mathbf{u_y}_j\end{bmatrix}$ | $\begin{bmatrix} \mathbf{lb_{\Delta x}}_j + \mathbf{ub_y}_j \\ \mathbf{ub_y}_j \end{bmatrix}$ |
-| P3 | $A_{i,j} \le 0, B_{i,j} + A_{i,j} \le 0$ | $\begin{bmatrix} \mathbf{l_x}_{j} & 0 \\ \mathbf{l_x}_{j} - \mathbf{l_{\Delta x}}_{j} & -\mathbf{l_{\Delta y}}_j \end{bmatrix}$ | $\begin{bmatrix} \mathbf{lb_x}_j \\ \mathbf{lb_x}_j - \mathbf{lb}_{\Delta} \end{bmatrix}$ |
-| P4 | $A_{i,j} \le 0, B_{i,j} \le 0$ | $\begin{bmatrix} \mathbf{l_x}_{j} & 0 \\ 0 & \mathbf{l_y}_j \end{bmatrix}$ | $\begin{bmatrix} \mathbf{lb_x}_j \\ \mathbf{lb_y}_j \end{bmatrix}$ |
-| P5 | $A_{i,j} \ge 0, B_{i,j} + A_{i,j} \le 0$ | $\begin{bmatrix}\mathbf{u_{\Delta x}}_{j} & \mathbf{u_{\Delta x}}_{j} + \mathbf{l_y}_{j} \\0 & \mathbf{l_y}_j\end{bmatrix}$ | $\begin{bmatrix} \mathbf{ub_{\Delta x}}_j + \mathbf{lb_y}_j \\ \mathbf{lb_y}_j \end{bmatrix}$ |
-| P6 | $A_{i,j} \ge 0, B_{i,j} + A_{i,j} \ge 0$ | $\begin{bmatrix} \mathbf{u_x}_{j} & 0 \\ \mathbf{u_x}_{j} - \mathbf{u_{\Delta x}}_{j} & -\mathbf{u_{\Delta y}}_j \end{bmatrix}$ | $\begin{bmatrix} \mathbf{ub_x}_j \\ \mathbf{ub_x}_j - \mathbf{ub}_{\Delta} \end{bmatrix}$ |
+| P1 | $A_{i,j} ≥ 0, B_{i,j} ≥ 0$ | $\begin{bmatrix} \mathbf{u_x}_{j}& 0 \\ 0& \mathbf{u_y}_{j} \end{bmatrix}$ | $\begin{bmatrix} \mathbf{ub_x}_{j} \\ \mathbf{ub_y}_{j} \end{bmatrix}$ |
+| P2 | $A_{i,j} ≤ 0, A_{i,j} + \boldsymbol{\alpha}_{j} B_{i,j} ≥ 0$ | $\begin{bmatrix} -\mathbf{u_{\Delta x}}_{j}/\boldsymbol{\alpha}_{j}& (\mathbf{u_y}_{j} - \mathbf{u_{\Delta y}}_{j})/\boldsymbol{\alpha}_{j} \\ 0& \mathbf{u_y}_{j} \end{bmatrix}$ | $\begin{bmatrix} (\mathbf{ub_y}_{j} - \mathbf{ub_{\Delta}}_{j})/\boldsymbol{\alpha}_{j} \\ \mathbf{ub_y}_{j} \end{bmatrix}$ |
+| P3 | $A_{i,j} ≤ 0, A_{i,j} + \boldsymbol{\alpha}_{j} B_{i,j} ≤ 0$ | $\begin{bmatrix} \mathbf{l_x}_{j}& 0 \\ \boldsymbol{\alpha}_{j} \mathbf{l_x}_{j} + \mathbf{u_{\Delta x}}_{j}& \mathbf{u_{\Delta y}}_{j} \end{bmatrix}$ | $\begin{bmatrix} \mathbf{lb_x}_{j}\\ \boldsymbol{\alpha}_{j} \mathbf{lb_x}_{j} + \mathbf{ub_{\Delta}}_{j} \end{bmatrix}$ |
+| P4 | $A_{i,j} ≤ 0, B_{i,j} ≤ 0$ | $\begin{bmatrix} \mathbf{l_x}_{j}& 0 \\ 0& \mathbf{l_y}_{j} \end{bmatrix}$ | $\begin{bmatrix} \mathbf{lb_x}_{j} \\ \mathbf{lb_y}_{j} \end{bmatrix}$ |
+| P5 | $A_{i,j} ≥ 0, A_{i,j} + \boldsymbol{\alpha}_{j} B_{i,j} ≤ 0$ | $\begin{bmatrix} -\mathbf{l_{\Delta x}}_{j}/\boldsymbol{\alpha}_{j}& (\mathbf{l_y}_{j} - \mathbf{l_{\Delta y}}_{j})/\boldsymbol{\alpha}_{j} \\ 0& \mathbf{l_y}_{j} \end{bmatrix}$ | $\begin{bmatrix} (\mathbf{lb_y}_{j} - \mathbf{lb_{\Delta}}_{j})/\boldsymbol{\alpha}_{j} \\ \mathbf{lb_y}_{j} \end{bmatrix}$ |
+| P6 | $A_{i,j} ≥ 0, A_{i,j} + \boldsymbol{\alpha}_{j} B_{i,j} ≥ 0$ | $\begin{bmatrix} \mathbf{u_x}_{j}& 0 \\ \boldsymbol{\alpha}_{j} \mathbf{u_x}_{j} + \mathbf{l_{\Delta x}}_{j}& \mathbf{l_{\Delta y}}_{j} \end{bmatrix}$ | $\begin{bmatrix} \mathbf{ub_x}_{j}\\ \boldsymbol{\alpha}_{j} \mathbf{ub_x}_{j} + \mathbf{lb_{\Delta}}_{j} \end{bmatrix}$ |
 
 Note that the result above may not be the optimal bound using linear programming, so further research can be done to find the optimal bound.

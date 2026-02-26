@@ -1,69 +1,65 @@
 
-# Linearization of 1-input 1-output Non-linear Operators $f$
+# Linearization of Basic Non-linear Operators
 
-Given a `gbound` for the input of $f$, we can derive the `dbound` for $f(x)$, $f(y)$ and $f(x) - f(y)$. 
+Given a non-linear operator $f$ and a region $R$, we want to find linear constraints to approximate the non-linear operator, which is in the following form:
 
-## Normalization of `gbound`
+$$
+\mathbf{l}^\mathrm{T} \mathbf{x} + \mathbf{lb} \le f(\mathbf{x}) \le \mathbf{u}^\mathrm{T} \mathbf{x} + \mathbf{ub} \text{ for any } \mathbf{x} \in R
+$$
 
-Before we go into the details of the linearization of specific non-linear operators, we first need to normalize the `gbound` to ensure that all bounds are tight. For example, for the `gbound` of $x$, we can compute the minimum and maximum values of $x$ in the `gbound` region, which are $\min(u_x, l_y + u_d)$ and $\max(l_x, u_y + l_d)$, respectively. Then we can update the `gbound` of $x$ to be $\min(u_x, l_y + u_d) \le x \le \max(l_x, u_y + l_d)$. 
+Specifically, given a  `gbound` region $l_x \le x \le u_x, l_y \le y \le u_y, l_d \le y - 𝛽 x \le u_d$, we want to find linear constraints to approximate the non-linear operator $f(x)$, $f(y)$ and $f(x) - \alpha f(y)$ for any $x, y$ and some $\alpha$ in the `gbound` region.
 
-## Bound for $f(x)$
+## Linearization Objective
+
+Different strategies can be used to find the linear constraints. Here we consider the following two objectives:
+
+1. Minimum $L_1$ norm of the bounds: $\displaystyle\int_R (\mathbf{u} - \mathbf{l})^\mathrm{T} \mathbf{x} + (\mathbf{ub} - \mathbf{lb}) \text{d}\mathbf{x}$.
+2. Minimum $L_\infty$ norm of the bounds: $\displaystyle\max_{\mathbf{x} \in R}\, (\mathbf{u} - \mathbf{l})^\mathrm{T} \mathbf{x} + (\mathbf{ub} - \mathbf{lb})$.
+
+For me, the minimum $L_1$ bounds makes more sense because it minimizes the total area between the upper and lower bounds. In the overall algorithm, the bound will be used to restrict different directions, e.g., we may want the minimum and maximum values of $a f(x) + b x$ in bound propagation. The minimum $L_1$ bounds have the ability to guarantee the average case.
+
+At the same time, the minimum $L_1$ bounds are easier to compute. To do this, we need *the convex (concave) envelope* of the non-linear operator, which is the tightest convex (concave) function that upper (lower) bounds the non-linear operator, defined as follows:
 
 $$
 \begin{gathered}
-\lambda_x x + \text{L}_x \le f(x) \le \lambda_x x + \text{U}_x \text{ for any } l_x \le x \le u_x \text{ where } \\ 
-\lambda_x = \frac{f(u_x) - f(l_x)}{u_x - l_x} \\
-\text{U}_x = \boxed{f}(-\lambda_x, 1, l_x, u_x) \\
-\text{L}_x = -\boxed{f}(\lambda_x, -1, l_x, u_x)
+f^{\cup}
+= \sup\{g \mid g \text{ is convex and } g(\mathbf{x}) \le f(\mathbf{x}) \text{ for any } \mathbf{x} \in R\}\\
+f^{\cap}
+= \inf\{g \mid g \text{ is concave
+    and } g(\mathbf{x}) \ge f(\mathbf{x}) \text{ for any } \mathbf{x} \in R\}
 \end{gathered}
 $$
 
-Here we use the symbol $\boxed{f}$ to represent the following optimization problem:
-
-$$
-\boxed{f}(a, b, l, u) = \max_{l \le x \le u} a x + b f(x)
-$$
-
-We use the symbol of box because the optimization problem is related to the convex (concave) envelope of $f$. 
-
-## Bound for $f(x) - f(y)$
-
-The `gbound` area is too complex for fast computation, thus we will try to relax the `gbound` area to a parallelogram area. Obviously, there are 3 ways to relax the `gbound` area to a parallelogram area, which are 1) $l_x \le x \le u_x, l_y \le y \le u_y$, 2) $l_x \le x \le u_x, l_d \le x - y \le u_d$ and 3) $l_y \le y \le u_y, l_d \le x - y \le u_d$. We will select the parallelogram with the smallest area. Specifically, we compare $u_x - l_x$, $u_y - l_y$, and $u_d - l_d$, if $u_d - l_d$ is the largest, we will select the first parallelogram, if $u_y - l_y$ is the largest, we will select the second parallelogram, and if $u_x - l_x$ is the largest, we will select the third parallelogram.
-
-### Case 1: $u_d - l_d$ is the largest
-
-We assume that $x$ and $y$ are independent, thus we can directly compute the bounds for $f(x) - f(y)$ using the bounds for $f(x)$ and $f(y)$:
+Then we have the formulas for the minimum $L_1$ bounds:
 
 $$
 \begin{gathered}
-\lambda_x x - \lambda_y y + \text{L}_x - \text
-{U}_y \le f(x) - f(y) \le \lambda_x x - \lambda_y y + \text{U}_x - \text{L}_y \\
-\text{where } \lambda_x, \text{L}_x, \text{
-U}_x, \lambda_y, \text{L}_y, \text{U}_y \text{ are defined as above}.
+\mathbf{l} = \nabla f^{\cup}(\mathbf{x}_C) \quad\quad \mathbf{lb} = f^{\cup}(\mathbf{x}_C) - \nabla f^{\cup}(\mathbf{x}_C)^\mathrm{T} \mathbf{x}_C\\
+\mathbf{u} = \nabla f^{\cap}(\mathbf{x}_C) \quad\quad \mathbf{ub} = f^{\cap}(\mathbf{x}_C) - \nabla f^{\cap}(\mathbf{x}_C)^\mathrm{T} \mathbf{x}_C \\
 \end{gathered}
 $$
 
-### Case 2: $u_y - l_y$ is the largest
+where $\mathbf{x}_C$ is the center of $R$.
 
-We assume that $x$ and $d = x - y$ are independent, thus we can compute the bounds for $f(x) - f(y) = f(x) - f(x - d)$:
+Therefore, in the following sections, we will use the minimum $L_1$ bounds as the linearization objective, and we will compute the convex (concave) envelope of the non-linear operator to obtain the linear constraints. 
 
-$$
-\begin{gathered}
-\lambda_{x2} x - \lambda_{d2} (x - y)
-+ \text{L}_2 \le f(x) - f(x - (x - y)) \le \lambda_{x2} x - \lambda_{d2} (x - y) + \text{U}_2 \\
-\text{where } \lambda_{x2} = \lambda_x - \frac{f(u_x - u_d) + f(u_x - l_d) - f(l_x - u_d) - f(l_x - l_d)}{2(u_x - l_x)} \\
-\lambda_{d2} = -\frac{f(u_x - u_d) + f(l_x - u_d) - f(u_x - l_d) - f(l_x -  l_d)}{2 (u_d - l_d)} \\
-\text{U}_2 = \boxed{f_\Delta} (-\lambda_{x2}, -\lambda_{d2}, 1, l_x, u_x, l_d, u_d) \\
-\text{L}_2 = -\boxed{f_\Delta} (\lambda_{x2}, \lambda_{d2}, -1, l_x, u_x, l_d, u_d)
-\end{gathered}
-$$
+See [DeepPoly](https://arxiv.org/abs/1805.03162) for more details about the minimum $L_1$ bounds.
 
-Where we use the symbol $\boxed{f_\Delta}$ to represent the following optimization problem:
+## Linearization Process
 
-$$
-\boxed{f_\Delta}(a, b, c, l_x, u_x, l_d, u_d) = \max_{\substack{l_x \le x \le u_x \\ l_d \le d \le u_d}} a \, x + b \, d + c (f(x) - f(x - d))
-$$
+Before we go into the details of the linearization of specific non-linear operators, we first need to normalize the `gbound` to ensure that all bounds are tight. For example, for the `gbound` of $y$, we can compute the minimum and maximum values of $y$ in the `gbound` region, which are $\min\left(u_y, 𝛽 u_x + u_d\right)$ and $\max\left(l_x, 𝛽 l_x + l_d\right)$
+, respectively. Then we can update the `gbound` of $y$ correspondingly. 
 
-### Case 3: $u_x - l_x$ is the largest
+Even after this, `gbound` area is still too complex for fast computation, thus we will try to further relax the `gbound` area to a parallelogram area. Obviously, there are 3 ways to relax the `gbound` area to a parallelogram area, which are 1) $l_x \le x \le u_x, l_y \le y \le u_y$, 2) $l_x \le x \le u_x, l_d \le y - 𝛽 x \le u_d$ and 3) $l_y \le y \le u_y, l_d \le y - 𝛽 x \le u_d$. 
 
-This case is symmetric to Case 2.
+We choose the parrallelogram area based on these:
+
+1. For $f(x)$ and $f(y)$, we will choose the parallelogram area of $l_x \le x \le u_x, l_y \le y \le u_y$.
+2. For the convex envelope of $f(y) - \alpha f(x)$, we choose area 2) $l_x \le x \le u_x, l_d \le y - 𝛽 x \le u_d$.
+3. For the concave envelope of $f(y) - \alpha f(x)$, we choose area 3) $l_y \le y \le u_y, l_d \le y - 𝛽 x \le u_d$.
+
+We do this for simplicity and fast computation, since $\alpha, \beta > 0$, case 2 and case 3 are symmetric for computation. It simplifies our algorithm.
+
+## Selecting $\alpha$
+
+The selection of $𝛼$ is important for the tightness of the bounds. Normally, we will select $𝛼$ based on the range of $f$ on `gbound`. We will discuss the selection of 𝛼 for each of the operators.
