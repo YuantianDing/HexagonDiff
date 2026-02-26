@@ -1,6 +1,6 @@
 ## Contents
 
-- [Overview](../README.md)
+- [Overview](README.md)
 - [Preprocessing](preprocessing.md)
 - [Verification Methods](methods.md)
   - [Bound Propagation](bound_propagation.md)
