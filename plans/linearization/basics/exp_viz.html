@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exp Difference Visualization</title>
+    <script src="https://cdn.jsdelivr.net/npm/scichart/index.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #6f6fb3;
+            color: #eee;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        .formula {
+            text-align: center;
+            margin-bottom: 20px;
+            font-family: 'Times New Roman', serif;
+            font-size: 1.2rem;
+            color: #87CEEB;
+        }
+
+        .main-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        #scichart-container {
+            flex: 1;
+            min-width: 600px;
+            height: 500px;
+            background: #16213e;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        #controls {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        #controls h2 {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: #87CEEB;
+        }
+
+        .slider-container {
+            margin-bottom: 15px;
+        }
+
+        .slider-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .slider-container input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #0f3460;
+            appearance: none;
+            outline: none;
+        }
+
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #00CED1;
+            cursor: pointer;
+        }
+
+        .slider-container span {
+            display: inline-block;
+            margin-top: 5px;
+            font-family: monospace;
+            color: #00CED1;
+        }
+
+        #legend {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        #legend h2 {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: #87CEEB;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .legend-color {
+            width: 24px;
+            height: 12px;
+            border-radius: 2px;
+            margin-right: 10px;
+        }
+
+        .info {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .info h2 {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            color: #87CEEB;
+        }
+
+        .info code {
+            background: #0f3460;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+
+        @media (max-width: 1000px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            #scichart-container {
+                min-width: 100%;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Exp Difference Linearization</h1>
+    <div class="formula">f(x, d) = exp(βx + d) − α · exp(x)</div>
+
+    <div class="main-container">
+        <div id="scichart-container"></div>
+
+        <div class="sidebar">
+            <div id="controls">
+                <h2>Parameters</h2>
+            </div>
+
+            <div id="legend">
+                <h2>Legend</h2>
+            </div>
+
+            <div class="info">
+                <h2>Controls</h2>
+                <p>
+                    <strong>Mouse:</strong> Drag to rotate, scroll to zoom<br>
+                    <strong>Sliders:</strong> Adjust bounds and coefficients
+                </p>
+                <br>
+                <p>
+                    Domain: <code>lx ≤ x ≤ ux</code>, <code>ld ≤ d ≤ ud</code><br>
+                    Upper/lower bounds are linear approximations.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="exp_viz.js"></script>
+    <script>
+        // Wait for both DOM and SciChart to be ready
+        function waitForSciChart(callback) {
+            if (typeof SciChart !== 'undefined') {
+                callback();
+            } else {
+                setTimeout(() => waitForSciChart(callback), 100);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            waitForSciChart(function() {
+                if (window.initExpVisualization) {
+                    window.initExpVisualization();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
