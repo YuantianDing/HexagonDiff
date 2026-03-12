@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReLU Difference Bounds Visualization</title>
+    <script src="https://cdn.jsdelivr.net/npm/scichart/index.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #6f6fb3;
+            color: #eee;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        .formula {
+            text-align: center;
+            margin-bottom: 20px;
+            font-family: 'Times New Roman', serif;
+            font-size: 1.2rem;
+            color: #87CEEB;
+        }
+
+        .main-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .charts-container {
+            flex: 1;
+            min-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .chart-wrapper {
+            background: #16213e;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .chart-wrapper h3 {
+            color: #87CEEB;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .scichart-container {
+            width: 100%;
+            height: 350px;
+            background: #0a0a23;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        #controls {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        #controls h2 {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: #87CEEB;
+        }
+
+        .slider-group {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #2a3f5f;
+        }
+
+        .slider-group:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .slider-group-title {
+            font-size: 0.85rem;
+            color: #87CEEB;
+            margin-bottom: 10px;
+        }
+
+        .slider-container {
+            margin-bottom: 12px;
+        }
+
+        .slider-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .slider-container input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #0f3460;
+            appearance: none;
+            outline: none;
+        }
+
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #00CED1;
+            cursor: pointer;
+        }
+
+        .slider-container span {
+            display: inline-block;
+            margin-top: 5px;
+            font-family: monospace;
+            color: #00CED1;
+        }
+
+        #legend {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        #legend h2 {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: #87CEEB;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .legend-color {
+            width: 24px;
+            height: 12px;
+            border-radius: 2px;
+            margin-right: 10px;
+        }
+
+        .info {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .info h2 {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            color: #87CEEB;
+        }
+
+        .info code {
+            background: #0f3460;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+
+        @media (max-width: 1200px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .charts-container {
+                min-width: 100%;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>ReLU Difference Bounds Comparison</h1>
+    <div class="formula">f(x, y) = relu(x) − relu(y)</div>
+
+    <div class="main-container">
+        <div class="charts-container">
+            <div class="chart-wrapper">
+                <h3>Bound 1: Independent ReLU bounds</h3>
+                <div id="scichart-bound1" class="scichart-container"></div>
+            </div>
+            <div class="chart-wrapper">
+                <h3>Bound 2: Difference-aware bounds (using ld, ud)</h3>
+                <div id="scichart-bound2" class="scichart-container"></div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div id="controls">
+                <h2>Parameters</h2>
+            </div>
+
+            <div id="legend">
+                <h2>Legend</h2>
+            </div>
+
+            <div class="info">
+                <h2>Constraints</h2>
+                <p>
+                    <code>lx ≤ x ≤ ux</code><br>
+                    <code>ly ≤ y ≤ uy</code><br>
+                    <code>ld ≤ x − y ≤ ud</code>
+                </p>
+                <br>
+                <h2>Controls</h2>
+                <p>
+                    <strong>Mouse:</strong> Drag to rotate, scroll to zoom
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="relu_diff_viz.js"></script>
+    <script>
+        function waitForSciChart(callback) {
+            if (typeof SciChart !== 'undefined') {
+                callback();
+            } else {
+                setTimeout(() => waitForSciChart(callback), 100);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            waitForSciChart(function() {
+                if (window.initReluDiffVisualization) {
+                    window.initReluDiffVisualization();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
